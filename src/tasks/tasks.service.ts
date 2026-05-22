@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Task } from './entities/task.entity';
 
 @Injectable()
@@ -17,11 +22,44 @@ export class TasksService {
   }
 
   findOne(id: string) {
-    return this.tasks.find((task) => task.id === Number(id));
+    const task = this.tasks.find((task) => task.id === Number(id));
+
+    if (task) return task;
+
+    throw new HttpException('Essa tarefa não existe.', HttpStatus.NOT_FOUND);
+
+    // throw new HttpException('Essa tarefa não existe.', HttpStatus.BAD_REQUEST);
+
+    // throw new NotFoundException('Essa tarefa NAO EXISTE!');
   }
 
   create(body: any) {
-    console.log('Tarefa criada com sucesso!');
-    return body;
+    const newId = this.tasks.length + 1;
+
+    const newTask = {
+      id: newId,
+      ...body,
+    };
+
+    this.tasks.push(newTask);
+
+    return newTask;
+  }
+
+  update(id: string, body: any) {
+    const taskIndex = this.tasks.findIndex((task) => task.id === Number(id));
+
+    if (taskIndex < 0) {
+      throw new HttpException('Essa tarefa não existe.', HttpStatus.NOT_FOUND);
+    }
+
+    const taskItem = this.tasks[taskIndex];
+
+    this.tasks[taskIndex] = {
+      ...taskItem,
+      ...body,
+    };
+
+    return this.tasks[taskIndex];
   }
 }
