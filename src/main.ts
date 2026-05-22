@@ -11,7 +11,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // ValidationPipe = para fazer validações e é preciso instalar -> npm i class-validator class-transformer
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // se true ele remove as chaves que não tem no DTO
+    }),
+  );
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
