@@ -14,15 +14,6 @@ import { PaginationDto } from '../common/dto/pagination.dto';
 export class TasksService {
   constructor(private prisma: PrismaService) {}
 
-  private tasks: Task[] = [
-    {
-      id: 1,
-      name: 'Seguir o Sujeito Programador do Youtube',
-      description: 'Aprendendo muito sobre programação',
-      completed: false,
-    },
-  ];
-
   async findAll(paginationDto?: PaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto ?? {};
 
