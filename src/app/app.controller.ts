@@ -19,4 +19,9 @@ export class AppController {
   createTest() {
     return 'ROTA POST FUNCIONANDO';
   }
+
+  @Get('/dimas')
+  getDimas() {
+    return this.appService.getDimas();
+  }
 }

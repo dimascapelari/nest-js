@@ -13,5 +13,11 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "types": ["node", "jest"]
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "prisma.config.ts",
+    "*.config.ts"
+  ]
 }

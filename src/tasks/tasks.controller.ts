@@ -12,15 +12,20 @@ import {
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly taskService: TasksService) {}
 
   @Get()
-  findAllTasks(@Query() queryParam: any) {
-    console.log(queryParam);
-    return this.taskService.findAll();
+  findAllTasks(@Query() paginationDto: PaginationDto) {
+    return this.taskService.findAll(paginationDto);
+  }
+
+  @Get('/dimas')
+  getDimas() {
+    return this.taskService.getDimas();
   }
 
   @Get(':id')
