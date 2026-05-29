@@ -42,15 +42,24 @@ export class TasksService {
   }
 
   async create(createTaskDto: CreateTaskDto) {
-    const newTask = await this.prisma.task.create({
-      data: {
-        name: createTaskDto.name,
-        description: createTaskDto.description,
-        completed: false,
-      },
-    });
+    try {
+      const newTask = await this.prisma.task.create({
+        data: {
+          name: createTaskDto.name,
+          description: createTaskDto.description,
+          completed: false,
+          userId: createTaskDto.userId,
+        },
+      });
 
-    return newTask;
+      return newTask;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Falha ao cadastrar tarefa',
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto) {
@@ -62,14 +71,25 @@ export class TasksService {
       });
 
       if (!findTask) {
-        throw new HttpException('Essa tarefa não existe', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          'Essa tarefa não existe',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const task = await this.prisma.task.update({
         where: {
           id: findTask.id,
         },
-        data: updateTaskDto,
+        data: {
+          name: updateTaskDto?.name ? updateTaskDto?.name : findTask.name,
+          description: updateTaskDto?.description
+            ? updateTaskDto?.description
+            : findTask.description,
+          completed: updateTaskDto?.completed
+            ? updateTaskDto?.completed
+            : findTask.completed,
+        },
       });
 
       return task;

@@ -7,7 +7,7 @@ DTO = Data Transfer Object (Objeto de transferência de dados)
 
 */
 
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, MinLength } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString({ message: 'O nome precisa ser um texto' })
@@ -21,4 +21,8 @@ export class CreateTaskDto {
   })
   @IsNotEmpty({ message: 'Descrição não pode ser vazia' })
   readonly description!: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  readonly userId!: number;
 }
