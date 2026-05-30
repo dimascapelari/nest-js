@@ -9,9 +9,9 @@ export class LoggerMiddleware implements NestMiddleware {
     const authorization = req.headers.authorization;
 
     if (authorization) {
-      // console.log('Token: ', authorization);
       (req as any).user = {
         token: authorization,
+        role: 'admin',
       };
     }
 

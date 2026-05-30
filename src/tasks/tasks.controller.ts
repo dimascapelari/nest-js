@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
@@ -19,8 +20,10 @@ import {
   BodyCreateTaskInteceptor,
   LoggerInterceptor,
 } from '../common/interceptors';
+import { AuthAminGuard } from '../common/guards/admin.guard';
 
 @Controller('tasks')
+@UseGuards(AuthAminGuard)
 export class TasksController {
   constructor(private readonly taskService: TasksService) {}
 
