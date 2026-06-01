@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   ParseIntPipe,
   Patch,
@@ -29,12 +30,17 @@ export class TasksController {
   constructor(
     private readonly taskService: TasksService,
     private readonly dimasConsole: DimasConsole,
+
+    @Inject('KEY_TOKEN')
+    private readonly keyToken: string,
   ) {}
 
   @Get()
   @UseInterceptors(LoggerInterceptor)
   @UseInterceptors(AddHeaderInterceptor)
   findAllTasks(@Query() paginationDto: PaginationDto) {
+    // console.log(this.keyToken);
+
     return this.taskService.findAll(paginationDto);
   }
 

@@ -6,6 +6,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { ApiExceptionFilter } from '../common/filters/exception-filter';
 import { DimasConsole, TaskUtils } from './tasks.utils';
 
+const token = 'TOKEN_987654321';
 @Module({
   imports: [PrismaModule],
   controllers: [TasksController],
@@ -17,6 +18,10 @@ import { DimasConsole, TaskUtils } from './tasks.utils';
     {
       provide: APP_FILTER,
       useClass: ApiExceptionFilter,
+    },
+    {
+      provide: 'KEY_TOKEN',
+      useValue: token,
     },
   ],
 })
