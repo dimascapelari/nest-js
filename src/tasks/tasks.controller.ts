@@ -21,11 +21,15 @@ import {
   LoggerInterceptor,
 } from '../common/interceptors';
 import { AuthAminGuard } from '../common/guards/admin.guard';
+import { DimasConsole } from './tasks.utils';
 
 @Controller('tasks')
 @UseGuards(AuthAminGuard)
 export class TasksController {
-  constructor(private readonly taskService: TasksService) {}
+  constructor(
+    private readonly taskService: TasksService,
+    private readonly dimasConsole: DimasConsole,
+  ) {}
 
   @Get()
   @UseInterceptors(LoggerInterceptor)
@@ -36,6 +40,7 @@ export class TasksController {
 
   @Get('/dimas')
   getDimas() {
+    console.log(this.dimasConsole.dimasContole());
     return this.taskService.getDimas();
   }
 
