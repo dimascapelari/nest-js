@@ -9,11 +9,13 @@ import { AppService } from './app.service';
 import { UsersModule } from '../users/users.module';
 import { TasksModule } from '../tasks/tasks.module';
 import { LoggerMiddleware } from '../common/middlewares/logger.middleware';
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from '../auth/auth.module';
 // import { APP_GUARD } from '@nestjs/core';
 // import { AuthAminGuard } from '../common/guards/admin.guard';
 
 @Module({
-  imports: [UsersModule, TasksModule],
+  imports: [ConfigModule.forRoot(), UsersModule, TasksModule, AuthModule],
   controllers: [AppController],
   providers: [
     AppService,
