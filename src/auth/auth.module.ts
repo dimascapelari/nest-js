@@ -4,11 +4,13 @@ import { BcryptService } from './hash/bcrypt.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PrismaModule } from '../prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config';
+import jwtConfig from './config/jwt.config';
 
 // Módulo global - Pode ser usado na aplicação inteira ( não precisa importar em outros módulos para usar )
 @Global()
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, ConfigModule.forFeature(jwtConfig)],
   providers: [
     {
       provide: HashingServiceProtocol,
