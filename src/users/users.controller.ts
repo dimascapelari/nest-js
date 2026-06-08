@@ -7,15 +7,14 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthTokenGuard } from '../auth/guard/auth-token.guard';
-import { Request } from 'express';
-import { REQUEST_TOKEN_PAYLOAD_NAME } from '../auth/common/auth.constants';
+import { TokenPayloadParam } from '../auth/param/token-payload.param';
+import { PayloadTokenDto } from '../auth/dto/payload-token.dto';
 
 @Controller('users')
 export class UsersController {
@@ -47,9 +46,9 @@ export class UsersController {
   updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-    @Req() req: Request,
+    @TokenPayloadParam() tokenPayloadParam: PayloadTokenDto,
   ) {
-    console.log('ID user: ', (req as any)[REQUEST_TOKEN_PAYLOAD_NAME]?.sub);
+    console.log('PAYLOAD RECEBIDO: ', tokenPayloadParam);
     return this.userService.update(id, updateUserDto);
   }
 
