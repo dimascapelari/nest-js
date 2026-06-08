@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HashingServiceProtocol } from '../auth/hash/hashing.service';
+import { PayloadTokenDto } from '../auth/dto/payload-token.dto';
 
 @Injectable()
 export class UsersService {
@@ -71,7 +72,11 @@ export class UsersService {
   }
 
   // -> Atualizar um usuário específico
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+    tokenPayload: PayloadTokenDto,
+  ) {
     try {
       const user = await this.prisma.user.findFirst({
         where: {
@@ -81,6 +86,10 @@ export class UsersService {
 
       if (!user) {
         throw new HttpException('Usuário não existe!', HttpStatus.BAD_REQUEST);
+      }
+
+      if (user.id !== tokenPayload.sub) {
+        throw new HttpException('Acesso negado.', HttpStatus.BAD_REQUEST);
       }
 
       const dataUser: { name?: string; passwordHash?: string } = {
@@ -113,7 +122,7 @@ export class UsersService {
 
       return updateUser;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       throw new HttpException(
         'Falha ao atualizar usuário!',
         HttpStatus.BAD_REQUEST,
@@ -122,7 +131,7 @@ export class UsersService {
   }
 
   // -> Deletar usuário
-  async delete(id: number) {
+  async delete(id: number, tokenPayload: PayloadTokenDto) {
     try {
       const user = await this.prisma.user.findFirst({
         where: {
@@ -132,6 +141,10 @@ export class UsersService {
 
       if (!user) {
         throw new HttpException('Usuário não existe!', HttpStatus.BAD_REQUEST);
+      }
+
+      if (user.id !== tokenPayload.sub) {
+        throw new HttpException('Acesso negado.', HttpStatus.BAD_REQUEST);
       }
 
       await this.prisma.user.delete({

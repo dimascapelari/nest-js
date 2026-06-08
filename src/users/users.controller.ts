@@ -46,15 +46,18 @@ export class UsersController {
   updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-    @TokenPayloadParam() tokenPayloadParam: PayloadTokenDto,
+    @TokenPayloadParam() tokenPayload: PayloadTokenDto,
   ) {
-    console.log('PAYLOAD RECEBIDO: ', tokenPayloadParam);
-    return this.userService.update(id, updateUserDto);
+    return this.userService.update(id, updateUserDto, tokenPayload);
   }
 
   // -> Deletar usuário
+  @UseGuards(AuthTokenGuard)
   @Delete(':id')
-  deleteUser(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.delete(id);
+  deleteUser(
+    @Param('id', ParseIntPipe) id: number,
+    @TokenPayloadParam() tokenPayload: PayloadTokenDto,
+  ) {
+    return this.userService.delete(id, tokenPayload);
   }
 }
