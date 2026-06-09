@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,7 +18,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthTokenGuard } from '../auth/guard/auth-token.guard';
 import { TokenPayloadParam } from '../auth/param/token-payload.param';
 import { PayloadTokenDto } from '../auth/dto/payload-token.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
@@ -67,7 +68,7 @@ export class UsersController {
     return this.userService.delete(id, tokenPayload);
   }
 
-  // -> Imagem do usuário
+  // -> Imagem Avatar do usuário
   @UseGuards(AuthTokenGuard)
   @UseInterceptors(FileInterceptor('file'))
   @Post('upload')
@@ -91,6 +92,28 @@ export class UsersController {
     // console.log(fileLocale);
 
     await fs.writeFile(fileLocale, file.buffer);
+
+    return true;
+  }
+
+  // -> Vários Arquivos (Teste)
+  @UseGuards(AuthTokenGuard)
+  @UseInterceptors(FilesInterceptor('files'))
+  @Post('uploads')
+  async uploadVariosArquivos(
+    @TokenPayloadParam() tokenPayload: PayloadTokenDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    files.forEach(async (file) => {
+      const fileExtension = path
+        .extname(file.originalname)
+        .toLowerCase()
+        .substring(1);
+
+      const fileName = `${randomUUID()}.${fileExtension}`;
+      const fileLocale = path.resolve(process.cwd(), 'files', fileName);
+      await fs.writeFile(fileLocale, file.buffer);
+    });
 
     return true;
   }
