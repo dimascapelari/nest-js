@@ -12,7 +12,7 @@
     "outDir": "./dist",
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest", "multer"]
   },
   "include": ["src/**/*"],
   "exclude": [
