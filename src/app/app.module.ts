@@ -11,11 +11,22 @@ import { TasksModule } from '../tasks/tasks.module';
 import { LoggerMiddleware } from '../common/middlewares/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '../auth/auth.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'node:path';
 // import { APP_GUARD } from '@nestjs/core';
 // import { AuthAminGuard } from '../common/guards/admin.guard';
 
 @Module({
-  imports: [ConfigModule.forRoot(), UsersModule, TasksModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot(),
+    UsersModule,
+    TasksModule,
+    AuthModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'files'),
+      serveRoot: '/files',
+    }),
+  ],
   controllers: [AppController],
   providers: [
     AppService,
