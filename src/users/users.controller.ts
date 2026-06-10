@@ -90,24 +90,7 @@ export class UsersController {
     )
     file: Express.Multer.File,
   ) {
-    // const mimeType = file.mimetype;
-    // console.log(mimeType);
-
-    const fileExtension = path
-      .extname(file.originalname)
-      .toLowerCase()
-      .substring(1);
-    // console.log(fileExtension);
-
-    const fileName = `${tokenPayload.sub}.${fileExtension}`;
-    // console.log(fileName);
-
-    const fileLocale = path.resolve(process.cwd(), 'files', fileName);
-    // console.log(fileLocale);
-
-    await fs.writeFile(fileLocale, file.buffer);
-
-    return true;
+    return this.userService.uploadAvatarImage(tokenPayload, file);
   }
 
   // -> Vários Arquivos (Teste)
