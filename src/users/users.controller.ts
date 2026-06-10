@@ -3,7 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseFilePipeBuilder,
   ParseIntPipe,
   Patch,
   Post,
@@ -74,7 +76,19 @@ export class UsersController {
   @Post('upload')
   async uploadAvatar(
     @TokenPayloadParam() tokenPayload: PayloadTokenDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /jpeg|jpg|png/g,
+        })
+        .addMaxSizeValidator({
+          maxSize: 3 * (1024 * 1024), // tamanho máximo 3 MB
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
   ) {
     // const mimeType = file.mimetype;
     // console.log(mimeType);
