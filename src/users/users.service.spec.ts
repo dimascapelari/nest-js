@@ -5,6 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HashingServiceProtocol } from '../auth/hash/hashing.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
 
 /*
     => Padrão AAA
@@ -40,11 +41,17 @@ describe('UsersService', () => {
         UsersService,
         {
           provide: PrismaService,
-          useValue: {},
+          useValue: {
+            user: {
+              create: jest.fn(),
+            },
+          },
         },
         {
           provide: HashingServiceProtocol,
-          useValue: {},
+          useValue: {
+            hash: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -54,7 +61,41 @@ describe('UsersService', () => {
     hashingService = module.get<HashingServiceProtocol>(HashingServiceProtocol);
   });
   it('should be define users service', () => {
-    console.log(userService);
     expect(userService).toBeDefined();
+  });
+
+  it('should create a new user', async () => {
+    // Preciso criar um createUserDto
+    // Preciso que o hashingService tenha o método hash
+    // Verificar se o hashingService foi chamado com o parametro createUserDto.password
+    // Verificar se prisma user create foi chamado
+    // O retorno deve ser o novo user criado
+
+    //  > Configuração do teste (Arrange)
+    const createUserDto: CreateUserDto = {
+      name: 'Testeteste',
+      email: 'testeteste@teste.com',
+      password: '123123',
+    };
+
+    jest.spyOn(hashingService, 'hash').mockResolvedValue('HASH_MOCK_EXEMPLO');
+
+    // > Algo que deseja fazer a ação (Act)
+    await userService.create(createUserDto);
+
+    // > Conferir se a ação foi esperada (Assert)
+    expect(hashingService.hash).toHaveBeenCalled();
+    expect(prismaService.user.create).toHaveBeenCalledWith({
+      data: {
+        name: createUserDto.name,
+        email: createUserDto.email,
+        passwordHash: 'HASH_MOCK_EXEMPLO',
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
   });
 });
