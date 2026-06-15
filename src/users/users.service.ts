@@ -66,7 +66,6 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         'Falha ao cadastrar usuário!',
         HttpStatus.BAD_REQUEST,
