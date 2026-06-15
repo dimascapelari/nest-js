@@ -265,5 +265,65 @@ describe('UsersService', () => {
         ),
       );
     });
+
+    it('should user updated', async () => {
+      const updateUserDto: UpdateUserDto = {
+        name: 'Novo nome',
+        password: 'nova senha',
+      };
+      const tokenPayload: PayloadTokenDto = {
+        sub: 1,
+        aud: '',
+        email: 'dimas@teste.com',
+        exp: 123,
+        iat: 123,
+        iss: '',
+      };
+
+      const mockUser = {
+        id: 1,
+        name: 'Dimas',
+        email: 'dimas@teste.com',
+        avatar: null,
+        passwordHash: 'hash_exemplo',
+        active: true,
+        createdAt: new Date(),
+      };
+
+      const updatedUser = {
+        id: 1,
+        name: 'Novo nome',
+        email: 'dimas@teste.com',
+        avatar: null,
+        passwordHash: 'novo_hash_exemplo',
+        active: true,
+        createdAt: new Date(),
+      };
+
+      jest.spyOn(prismaService.user, 'findFirst').mockResolvedValue(mockUser);
+      jest.spyOn(hashingService, 'hash').mockResolvedValue('novo_hash_exemplo');
+      jest.spyOn(prismaService.user, 'update').mockResolvedValue(updatedUser);
+
+      const result = await userService.update(1, updateUserDto, tokenPayload);
+
+      expect(hashingService.hash).toHaveBeenCalledWith(updateUserDto.password);
+
+      expect(prismaService.user.update).toHaveBeenCalledWith({
+        where: {
+          id: 1,
+        },
+        data: {
+          name: updateUserDto.name,
+          passwordHash: 'novo_hash_exemplo',
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      });
+
+      expect(result).toEqual(updatedUser);
+    });
   });
 });
