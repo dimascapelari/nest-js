@@ -14,28 +14,11 @@ import * as fs from 'node:fs/promises';
 
 jest.mock('node:fs/promises');
 
-/*
-    => Padrão AAA
+// ----------   => Padrão AAA   ---------------------
 
-     > Configuração do teste (Arrange)
-     > Algo que deseja fazer a ação (Act)
-     > Conferir se a ação foi esperada (Assert)
-*/
-
-// describe('UsersService', () => {
-//   //   it('deveria testar o modulo usersservice', () => {});
-//   //   test('testar se o users service foi definido', () => {});
-
-//   it('should be define users service', () => {
-//     const numero1 = 150;
-//     const numero2 = 100;
-
-//     const conta = numero1 - numero2;
-
-//     // expect(conta).toBe(50);
-//     expect(conta).toBeGreaterThan(10);
-//   });
-// });
+//     > Configuração do teste (Arrange)
+//     > Algo que deseja fazer a ação (Act)
+//     > Conferir se a ação foi esperada (Assert)
 
 describe('UsersService', () => {
   let userService: UsersService;
@@ -75,6 +58,11 @@ describe('UsersService', () => {
     prismaService = module.get<PrismaService>(PrismaService);
     hashingService = module.get<HashingServiceProtocol>(HashingServiceProtocol);
   });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be define users service', () => {
     expect(userService).toBeDefined();
   });
