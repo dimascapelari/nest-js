@@ -170,12 +170,6 @@ export class UsersService {
     tokenPayload: PayloadTokenDto,
     file: Express.Multer.File,
   ) {
-    // const mimeType = file.mimetype;
-    // console.log(mimeType);
-    // console.log(fileExtension);
-    // console.log(fileName);
-    // console.log(fileLocale);
-
     try {
       const fileExtension = path
         .extname(file.originalname)
@@ -218,7 +212,6 @@ export class UsersService {
 
       return updateUser;
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         'Falha ao atualizar o avatar do usuário!',
         HttpStatus.BAD_REQUEST,

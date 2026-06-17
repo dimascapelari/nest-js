@@ -413,4 +413,34 @@ describe('UsersService', () => {
       });
     });
   });
+
+  describe('Upload Avatar User', () => {
+    it('should throw NOT_FOUND when user is not found', async () => {
+      const tokenPayload: PayloadTokenDto = {
+        sub: 1,
+        aud: '',
+        email: 'dimas@teste.com',
+        exp: 123,
+        iat: 123,
+        iss: '',
+      };
+
+      const file = {
+        originalname: 'avatar.png',
+        mimetype: 'image/png',
+        buffer: Buffer.from(''),
+      } as Express.Multer.File;
+
+      jest.spyOn(prismaService.user, 'findFirst').mockResolvedValue(null);
+
+      await expect(
+        userService.uploadAvatarImage(tokenPayload, file),
+      ).rejects.toThrow(
+        new HttpException(
+          'Falha ao atualizar o avatar do usuário!',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+  });
 });
