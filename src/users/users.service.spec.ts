@@ -173,7 +173,7 @@ describe('UsersService', () => {
     });
   });
 
-  describe('FindOnde User', () => {
+  describe('FindOne User', () => {
     it('should return a findOne user', async () => {
       // -> (Arrange)
       const mockUser = {
