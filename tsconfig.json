@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
     "module": "Node16",
     "moduleResolution": "node16",
     "esModuleInterop": true,
@@ -14,7 +13,7 @@
     "strictNullChecks": true,
     "types": ["node", "jest", "multer"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "test/**/*"],
   "exclude": [
     "node_modules",
     "dist",
