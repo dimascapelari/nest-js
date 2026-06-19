@@ -1,7 +1,12 @@
+import * as fs from 'node:fs/promises';
 import { PayloadTokenDto } from '../auth/dto/payload-token.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersController } from './users.controller';
+
+// Faz o Jest substituir o módulo de arquivos por mocks,
+// assim o teste não escreve nada de verdade no disco.
+jest.mock('node:fs/promises');
 
 describe('Users Controller', () => {
   let controller: UsersController;
@@ -111,6 +116,7 @@ describe('Users Controller', () => {
   });
 
   it('should delete user', async () => {
+    // Arrange
     const userId = 1;
 
     const tokenPayload: PayloadTokenDto = {
@@ -122,8 +128,69 @@ describe('Users Controller', () => {
       iss: '',
     };
 
+    // Act
     await controller.deleteUser(userId, tokenPayload);
 
+    // Assert
     expect(usersServiceMock.delete).toHaveBeenCalledWith(userId, tokenPayload);
+  });
+
+  it('should upload avatar', async () => {
+    // Arrange
+    const tokenPayload: PayloadTokenDto = {
+      sub: 1,
+      aud: '',
+      email: '',
+      exp: 1,
+      iat: 1,
+      iss: '',
+    };
+    const mockFile = {
+      originalname: 'avatar.png',
+      mimetype: 'image/png',
+      buffer: Buffer.from('mock'),
+    } as Express.Multer.File;
+
+    // Act
+    await controller.uploadAvatar(tokenPayload, mockFile);
+
+    // Assert
+    expect(usersServiceMock.uploadAvatarImage).toHaveBeenCalledWith(
+      tokenPayload,
+      mockFile,
+    );
+  });
+
+  it('should upload files', async () => {
+    // Arrange
+    const tokenPayload: PayloadTokenDto = {
+      sub: 1,
+      aud: '',
+      email: '',
+      exp: 1,
+      iat: 1,
+      iss: '',
+    };
+    const mockFile1 = {
+      originalname: 'avatar.png',
+      mimetype: 'image/png',
+      buffer: Buffer.from('mock'),
+    } as Express.Multer.File;
+
+    const mockFile2 = {
+      originalname: 'documento.pdf',
+      mimetype: 'application/pdf',
+      buffer: Buffer.from('mock'),
+    } as Express.Multer.File;
+
+    // Act
+    const result = await controller.uploadVariosArquivos(tokenPayload, [
+      mockFile1,
+      mockFile2,
+    ]);
+
+    // Assert
+    expect(result).toBe(true);
+    expect(fs.writeFile).toHaveBeenCalledTimes(2);
   });
 });
