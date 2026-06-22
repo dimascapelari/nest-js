@@ -18,7 +18,11 @@ import { join } from 'node:path';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV
+        ? `.env.${process.env.NODE_ENV}`
+        : `.env`,
+    }),
     UsersModule,
     TasksModule,
     AuthModule,
