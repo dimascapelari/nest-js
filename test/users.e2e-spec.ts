@@ -56,9 +56,34 @@ describe('Users (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {});
+  afterEach(async () => {
+    await prismaService.user.deleteMany(); // apaga todos os usuário do banco
+  });
 
   afterEach(async () => {
     await app.close();
+  });
+
+  describe('/users', () => {
+    it('/users (POST) - createUser', async () => {
+      const createUserDto = {
+        name: 'Dimas Test',
+        email: 'dimas-teste@teste.com',
+        password: '123123',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/users')
+        .send(createUserDto)
+        .expect(201);
+
+      // console.log(response.status);
+
+      expect(response.body).toEqual({
+        id: response.body.id,
+        name: 'Dimas Test',
+        email: 'dimas-teste@teste.com',
+      });
+    });
   });
 });
