@@ -85,5 +85,26 @@ describe('Users (e2e)', () => {
         email: 'dimas-teste@teste.com',
       });
     });
+
+    it('/users (POST) - weak password', async () => {
+      const createUserDto = {
+        name: 'Dimas Test',
+        email: 'teste@teste.com',
+        password: '123',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/users')
+        .send(createUserDto)
+        .expect(400);
+
+      expect(response.body.message.message[0]).toEqual(
+        'password must be longer than or equal to 6 characters',
+      );
+
+      // console.log('RESPOSTA ', response.body);
+    });
+
+    it('/users (PATCH) - update user', async () => {});
   });
 });
