@@ -61,7 +61,7 @@ describe('Users (e2e)', () => {
   });
 
   afterEach(async () => {
-    await app.close();
+    await app.close(); // garante que o app será encerrado depois dos testes
   });
 
   describe('/users', () => {
