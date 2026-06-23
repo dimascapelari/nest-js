@@ -24,7 +24,14 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
-import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -38,18 +45,22 @@ export class UsersController {
 
   // -> Buscar os detalhes de 1 usuário
   @Get(':id')
+  @ApiOperation({ summary: 'Buscar detalhes de um usuário' })
   findOneUser(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne(id);
   }
 
   // -> Cadastrar usuário
   @Post()
+  @ApiOperation({ summary: 'Cadastrar um novo usuário' })
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
   // -> Atualizar um usuário específico
   @UseGuards(AuthTokenGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Atualizar um usuário' })
   @Patch(':id')
   updateUser(
     @Param('id', ParseIntPipe) id: number,
@@ -61,6 +72,24 @@ export class UsersController {
 
   // -> Deletar usuário
   @UseGuards(AuthTokenGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Deletar um usuário',
+    description: 'Remove permanentemente um usuário.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID do usuário que será deletado',
+    example: 1,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuário foi deletado com sucesso!',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Falha ao deletar usuário',
+  })
   @Delete(':id')
   deleteUser(
     @Param('id', ParseIntPipe) id: number,
@@ -72,6 +101,7 @@ export class UsersController {
   // -> Imagem Avatar do usuário
   @UseGuards(AuthTokenGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Foto do usuário' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {

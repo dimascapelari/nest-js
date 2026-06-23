@@ -6,6 +6,13 @@ import { HashingServiceProtocol } from '../auth/hash/hashing.service';
 import { PayloadTokenDto } from '../auth/dto/payload-token.dto';
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
+import {
+  ResponseCreateUserDto,
+  ResponseDeleteUserDto,
+  ResponseFindOneUserDto,
+  ResponseUpdateAvatarDto,
+  ResponseUpdateUserDto,
+} from './dto/response-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +28,7 @@ export class UsersService {
   }
 
   // -> Buscar os detalhes de 1 usuário
-  async findOne(id: number) {
+  async findOne(id: number): Promise<ResponseFindOneUserDto> {
     const user = await this.prisma.user.findFirst({
       where: {
         id: id,
@@ -43,7 +50,7 @@ export class UsersService {
   }
 
   // -> Cadastrar usuário
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<ResponseCreateUserDto> {
     try {
       const passwordHash = await this.hashingService.hash(
         createUserDto.password,
@@ -78,7 +85,7 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto,
     tokenPayload: PayloadTokenDto,
-  ) {
+  ): Promise<ResponseUpdateUserDto> {
     try {
       const user = await this.prisma.user.findFirst({
         where: {
@@ -132,7 +139,10 @@ export class UsersService {
   }
 
   // -> Deletar usuário
-  async delete(id: number, tokenPayload: PayloadTokenDto) {
+  async delete(
+    id: number,
+    tokenPayload: PayloadTokenDto,
+  ): Promise<ResponseDeleteUserDto> {
     try {
       const user = await this.prisma.user.findFirst({
         where: {
@@ -155,7 +165,7 @@ export class UsersService {
       });
 
       return {
-        message: 'Usuário foi deletado com sucesso!',
+        message: `Usuário #${id} foi deletado com sucesso!`,
       };
     } catch (error) {
       throw new HttpException(
@@ -169,7 +179,7 @@ export class UsersService {
   async uploadAvatarImage(
     tokenPayload: PayloadTokenDto,
     file: Express.Multer.File,
-  ) {
+  ): Promise<ResponseUpdateAvatarDto> {
     try {
       const fileExtension = path
         .extname(file.originalname)

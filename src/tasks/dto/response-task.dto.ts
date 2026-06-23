@@ -6,3 +6,7 @@ export class ResponseTaskDto {
   createdAt?: Date | null;
   userId!: number | null;
 }
+
+export class ResponseDeleteTaskDto {
+  message!: string;
+}

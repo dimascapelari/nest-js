@@ -23,6 +23,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -100,7 +101,19 @@ export class TasksController {
 
   @UseGuards(AuthTokenGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Deletar uma tarefa' })
+  @ApiOperation({
+    summary: 'Deletar uma tarefa',
+    description:
+      'Remove permanentemente uma tarefa pertencente ao usuário autenticado.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID da tarefa que será deletada',
+    example: 1,
+  })
+  @ApiResponse({ status: 200, description: 'Tarefa deletada com sucesso' })
+  @ApiResponse({ status: 404, description: 'Tarefa não encontrada' })
+  @ApiResponse({ status: 401, description: 'Não autorizado' })
   @Delete(':id')
   deleteTask(
     @Param('id', ParseIntPipe) id: number,

@@ -4,7 +4,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { PayloadTokenDto } from '../auth/dto/payload-token.dto';
-import { ResponseTaskDto } from './dto/response-task.dto';
+import { ResponseDeleteTaskDto, ResponseTaskDto } from './dto/response-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -111,7 +111,10 @@ export class TasksService {
     }
   }
 
-  async delete(id: number, tokenPayload: PayloadTokenDto) {
+  async delete(
+    id: number,
+    tokenPayload: PayloadTokenDto,
+  ): Promise<ResponseDeleteTaskDto> {
     try {
       const findTask = await this.prisma.task.findFirst({
         where: {
