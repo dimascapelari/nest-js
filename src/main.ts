@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 // app.module.ts : Módulo principal do aplicativo
 // app.controller.ts : Define as rotas e lida com as requisições
@@ -25,6 +26,19 @@ async function bootstrap() {
       whitelist: true, // se true ele remove as chaves que não tem no DTO
     }),
   );
+
+  // Configuração do Swagger --------------------
+  const configSwagger = new DocumentBuilder()
+    .setTitle('Lista de tarefas')
+    .setDescription('API lista de tarefas')
+    .setVersion('1.0')
+    .build();
+
+  const documentFactory = () =>
+    SwaggerModule.createDocument(app, configSwagger);
+  SwaggerModule.setup('dimasAPI', app, documentFactory);
+  // -----------------------------------------------
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
