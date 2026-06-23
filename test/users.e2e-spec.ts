@@ -105,6 +105,46 @@ describe('Users (e2e)', () => {
       // console.log('RESPOSTA ', response.body);
     });
 
-    it('/users (PATCH) - update user', async () => {});
+    it('/users (PATCH) - update user', async () => {
+      const createUserDto = {
+        name: 'Mariana Test',
+        email: 'mariana.teste@teste.com',
+        password: '123123',
+      };
+
+      const updateUserDto = {
+        name: 'Mariana Capelari',
+      };
+
+      const user = await request(app.getHttpServer())
+        .post('/users')
+        .send(createUserDto)
+        .expect(201);
+
+      const auth = await request(app.getHttpServer()).post('/auth').send({
+        email: createUserDto.email,
+        password: createUserDto.password,
+      });
+
+      // console.log(auth.body);
+
+      expect(auth.body.token).not.toBeNull();
+      expect(auth.body.token).toEqual(auth.body.token);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/users/${auth.body.id}`)
+        .set('Authorization', `Bearer ${auth.body.token}`)
+        .send(updateUserDto);
+      // .expect(401);
+
+      console.log(response.body);
+      // expect(user.body.name).toEqual(updateUserDto.name);
+
+      expect(response.body).toEqual({
+        id: auth.body.id,
+        name: updateUserDto.name,
+        email: createUserDto.email,
+      });
+    });
   });
 });
