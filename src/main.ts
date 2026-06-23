@@ -10,6 +10,15 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: '*', // Libera para todos fazerem requisição
+  });
+
+  // Libera somente para o site especifico
+  // app.enableCors({
+  //   origin: ['https://meusite.com'],
+  // });
+
   // ValidationPipe = para fazer validações e é preciso instalar -> npm i class-validator class-transformer
   app.useGlobalPipes(
     new ValidationPipe({
