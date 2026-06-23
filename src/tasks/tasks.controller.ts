@@ -18,6 +18,7 @@ import { DimasConsole } from './tasks.utils';
 import { AuthTokenGuard } from '../auth/guard/auth-token.guard';
 import { TokenPayloadParam } from '../auth/param/token-payload.param';
 import { PayloadTokenDto } from '../auth/dto/payload-token.dto';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
 @Controller('tasks')
 export class TasksController {
@@ -27,22 +28,27 @@ export class TasksController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Listar todas as tarefas' })
   findAllTasks(@Query() paginationDto: PaginationDto) {
     return this.taskService.findAll(paginationDto);
   }
 
   @Get('/dimas')
+  @ApiOperation({ summary: 'Rota de teste' })
   getDimas() {
     console.log(this.dimasConsole.dimasContole());
     return this.taskService.getDimas();
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Buscar detalhes de uma tarefas' })
   findOneTask(@Param('id', ParseIntPipe) id: number) {
     return this.taskService.findOne(id);
   }
 
   @UseGuards(AuthTokenGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Criar uma nova tarefa' })
   @Post()
   createTask(
     @Body() createTaskDto: CreateTaskDto,
@@ -52,6 +58,8 @@ export class TasksController {
   }
 
   @UseGuards(AuthTokenGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Atualizar uma tarefa específica' })
   @Patch(':id')
   updateTask(
     @Param('id', ParseIntPipe) id: number,
@@ -62,6 +70,8 @@ export class TasksController {
   }
 
   @UseGuards(AuthTokenGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Deletar uma tarefa' })
   @Delete(':id')
   deleteTask(
     @Param('id', ParseIntPipe) id: number,
