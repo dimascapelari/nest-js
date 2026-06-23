@@ -137,7 +137,7 @@ describe('Users (e2e)', () => {
         .send(updateUserDto);
       // .expect(401);
 
-      console.log(response.body);
+      // console.log(response.body);
       // expect(user.body.name).toEqual(updateUserDto.name);
 
       expect(response.body).toEqual({
@@ -145,6 +145,46 @@ describe('Users (e2e)', () => {
         name: updateUserDto.name,
         email: createUserDto.email,
       });
+    });
+
+    it('/users (DELETE) - delete a user', async () => {
+      // Cadastrar um usuário
+      // Logar o usuário
+      // Pegar o token dele
+      // Deletar o usuário passando o token dele
+
+      // Cadastrar um usuário
+      const createUserDto = {
+        name: 'Dimas Test',
+        email: 'dimas.teste@teste.com',
+        password: '123123',
+      };
+
+      const user = await request(app.getHttpServer())
+        .post('/users')
+        .send(createUserDto)
+        .expect(201);
+
+      // Logar o usuário
+      const auth = await request(app.getHttpServer()).post('/auth').send({
+        email: createUserDto.email,
+        password: createUserDto.password,
+      });
+
+      // const userId = auth.body.id;
+      const userId = user.body.id;
+      const userToken = auth.body.token;
+
+      // Deletar o usuário passando o token dele
+      const response = await request(app.getHttpServer())
+        .delete(`/users/${userId}`)
+        .set('Authorization', `Bearear ${userToken}`);
+
+      // console.log(response.body);
+
+      expect(response.body.message).toEqual(
+        'Usuário foi deletado com sucesso!',
+      );
     });
   });
 });
